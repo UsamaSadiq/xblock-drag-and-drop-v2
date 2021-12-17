@@ -10,11 +10,13 @@ import copy
 import json
 import logging
 
-import pkg_resources
-import six
+
 import six.moves.urllib.error  # pylint: disable=import-error
 import six.moves.urllib.parse  # pylint: disable=import-error
 import six.moves.urllib.request  # pylint: disable=import-error
+
+import six
+import pkg_resources
 import webob
 
 from django.utils import translation
@@ -41,7 +43,6 @@ logger = logging.getLogger(__name__)
 # Classes ###########################################################
 
 
-# pylint: disable=bad-continuation
 @XBlock.wants('settings')
 @XBlock.needs('i18n')
 class DragAndDropBlock(
@@ -938,13 +939,14 @@ class DragAndDropBlock(
         for this.
         """
         if hasattr(self.runtime, 'replace_urls'):
-            url = self.runtime.replace_urls(u'"{}"'.format(url))[1:-1]
+            url = self.runtime.replace_urls(f"{url}")[1:-1]
         elif hasattr(self.runtime, 'course_id'):
             # edX Studio uses a different runtime for 'studio_view' than 'student_view',
             # and the 'studio_view' runtime doesn't provide the replace_urls API.
             try:
-                from common.djangoapps.static_replace import replace_static_urls  # pylint: disable=import-error
-                url = replace_static_urls(u'"{}"'.format(url), None, course_id=self.runtime.course_id)[1:-1]
+                # pylint: disable-next=import-error, import-outside-toplevel
+                from common.djangoapps.static_replace import replace_static_urls
+                url = replace_static_urls(f"{url}", None, course_id=self.runtime.course_id)[1:-1]
             except ImportError:
                 pass
         return url
@@ -1053,6 +1055,7 @@ class DragAndDropBlock(
         for zone in self.zones:
             if zone["uid"] == uid:
                 return zone
+        return None
 
     def _get_item_stats(self):
         """
@@ -1161,28 +1164,28 @@ class DragAndDropBlock(
         # values may be numeric / string or dict
         # default implementation is an empty dict
 
-        xblock_body = super(DragAndDropBlock, self).index_dictionary()
+        xblock_body = super().index_dictionary()
 
         zones_display_names = {
-            "zone_{}_display_name".format(zone_i):
+            f"zone_{zone_i}_display_name":
                 _clean_data(zone.get("title", ""))
             for zone_i, zone in enumerate(self.data.get("zones", []))
         }
 
         zones_description = {
-            "zone_{}_description".format(zone_i):
+            f"zone_{zone_i}_description":
                 _clean_data(zone.get("description", ""))
             for zone_i, zone in enumerate(self.data.get("zones", []))
         }
 
         items_display_names = {
-            "item_{}_display_name".format(item_i):
+            f"item_{item_i}_display_name":
                 _clean_data(item.get("displayName", ""))
             for item_i, item in enumerate(self.data.get("items", []))
         }
 
         items_image_description = {
-            "item_{}_image_description".format(item_i):
+            f"item_{item_i}_image_description":
                 _clean_data(item.get("imageDescription", ""))
             for item_i, item in enumerate(self.data.get("items", []))
         }
