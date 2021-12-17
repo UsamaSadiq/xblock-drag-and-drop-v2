@@ -38,7 +38,7 @@ class Colors(object):
             return None
 
 
-@ddt
+@ddttests/integration/test_base.py
 class TestDragAndDropRender(BaseIntegrationTest):
     """
     Verifying Drag and Drop XBlock rendering against default data - if default data changes this
